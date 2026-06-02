@@ -1,0 +1,12 @@
+# Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Lock files
+*.lock
+
+# CSV and Excel output files (large files)
+*.csv
+*.xlsx
