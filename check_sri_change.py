@@ -584,15 +584,6 @@ def send_email_notification(old_size, new_size, month, year, total_sales, table)
     except Exception as e:
         write_log(f"Error al enviar el correo: {e}")
 
-def disable_scheduled_task():
-    if sys.platform != 'win32':
-        return
-    try:
-        write_log("Deshabilitando la tarea programada 'MonitorSRIVehiculosWeb' para pausar chequeos...")
-        subprocess.run(["powershell", "-Command", "Disable-ScheduledTask -TaskName 'MonitorSRIVehiculosWeb'"], capture_output=True)
-        write_log("Tarea programada deshabilitada con éxito.")
-    except Exception as e:
-        write_log(f"Error al deshabilitar la tarea programada: {e}")
 
 def download_file(ctx):
     req = urllib.request.Request(URL, headers={'User-Agent': 'Mozilla/5.0'})
