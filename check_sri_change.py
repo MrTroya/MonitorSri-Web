@@ -749,7 +749,7 @@ def send_email_notification(old_size, new_size, month, year, total_sales, table)
         subject = f"Resultados SRI {month}".strip()
 
     body = (
-        f"Se ha detectado un incremento en el archivo de vehículos nuevos del SRI (Versión Web/Actions).\n\n"
+        f"Se ha detectado un incremento en el archivo de vehículos nuevos del SRI (Generado de forma remota).\n\n"
         f"Detalles de la descarga:\n"
         f"- Tamaño anterior: {old_size / 1024 / 1024:.2f} MB ({old_size} bytes)\n"
         f"- Tamaño nuevo: {new_size / 1024 / 1024:.2f} MB ({new_size} bytes)\n"
