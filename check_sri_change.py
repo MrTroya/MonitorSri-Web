@@ -150,6 +150,7 @@ def generate_html_report():
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
     <meta http-equiv="refresh" content="60">
     <title>Reporte de Ejecuciones SRI - Web</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -395,10 +396,133 @@ def generate_html_report():
         .btn-close:hover {{
             background-color: #1d4ed8;
         }}
+
+        /* Login Page Styles */
+        .login-overlay {{
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 1rem;
+        }}
+
+        .login-card {{
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 400px;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            text-align: center;
+            animation: fadeIn 0.5s ease-out;
+        }}
+
+        @keyframes fadeIn {{
+            from {{ opacity: 0; transform: translateY(20px); }}
+            to {{ opacity: 1; transform: translateY(0); }}
+        }}
+
+        .login-logo {{
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #3b82f6, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }}
+
+        .login-field {{
+            margin-bottom: 1.25rem;
+            text-align: left;
+        }}
+
+        .login-field label {{
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }}
+
+        .login-input {{
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s, background-color 0.2s;
+        }}
+
+        .login-input:focus {{
+            border-color: var(--blue);
+            background-color: rgba(255, 255, 255, 0.08);
+        }}
+
+        .btn-login {{
+            width: 100%;
+            background: linear-gradient(135deg, #3b82f6, #10b981);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s ease, filter 0.2s ease;
+            font-size: 0.95rem;
+            margin-top: 1rem;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }}
+
+        .btn-login:hover {{
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+        }}
+
+        .btn-login:active {{
+            transform: translateY(0);
+        }}
+
+        .login-error {{
+            color: var(--red);
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            display: none;
+            font-weight: 500;
+        }}
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Pantalla de Login -->
+    <div id="login-overlay" class="login-overlay">
+        <div class="login-card">
+            <div class="login-logo">Monitor SRI - Acceso</div>
+            <form onsubmit="handleLogin(event)">
+                <div class="login-field">
+                    <label for="username">Usuario</label>
+                    <input type="text" id="username" class="login-input" required autocomplete="username">
+                </div>
+                <div class="login-field">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" class="login-input" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn-login">Iniciar Sesión</button>
+                <div id="login-error" class="login-error">Usuario o contraseña incorrectos.</div>
+            </form>
+        </div>
+    </div>
+
+    <div class="container" id="dashboard-content" style="display: none;">
         <header>
             <div>
                 <h1>Reporte de Monitoreo - SRI (Web Version)</h1>
@@ -476,6 +600,46 @@ def generate_html_report():
             document.getElementById('forceModal').style.display = 'none';
         }}
 
+        // Authentication check
+        async function sha256(message) {{
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }}
+
+        async function checkAuth() {{
+            const authed = sessionStorage.getItem('sri_authenticated');
+            if (authed === 'true') {{
+                document.getElementById('login-overlay').style.display = 'none';
+                document.getElementById('dashboard-content').style.display = 'block';
+                startCountdown();
+            }} else {{
+                document.getElementById('login-overlay').style.display = 'flex';
+                document.getElementById('dashboard-content').style.display = 'none';
+            }}
+        }}
+
+        async function handleLogin(event) {{
+            event.preventDefault();
+            const userVal = document.getElementById('username').value;
+            const passVal = document.getElementById('password').value;
+            
+            const userHash = await sha256(userVal);
+            const passHash = await sha256(passVal);
+            
+            if (userHash === '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918' && 
+                passHash === 'd79b20f547f736d106370abe65777c97ac337a08190b9d2e123a9e7fabac1afd') {{
+                sessionStorage.setItem('sri_authenticated', 'true');
+                document.getElementById('login-overlay').style.display = 'none';
+                document.getElementById('dashboard-content').style.display = 'block';
+                startCountdown();
+            }} else {{
+                document.getElementById('login-error').style.display = 'block';
+                document.getElementById('password').value = '';
+            }}
+        }}
+
         // Countdown Timer Logic
         function startCountdown() {{
             const nextCheckStr = document.getElementById('next-check-time').innerText;
@@ -535,9 +699,8 @@ def generate_html_report():
             setInterval(update, 1000);
         }}
         
-        window.addEventListener('DOMContentLoaded', startCountdown);
+        window.addEventListener('DOMContentLoaded', checkAuth);
     </script>
-</body>
 </html>
 """
         with open(REPORT_HTML_PATH, 'w', encoding='utf-8') as f:
