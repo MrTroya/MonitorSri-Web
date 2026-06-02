@@ -25,6 +25,35 @@ REPORT_HTML_PATH = os.path.join(BASE_DIR, 'index.html')
 
 URL = 'https://descargas.sri.gob.ec/download/datosAbiertos/SRI_Vehiculos_Nuevos_2026.csv'
 
+def read_last_size():
+    last_size = None
+    ref_time = "Nunca"
+    if os.path.exists(SIZE_FILE):
+        try:
+            with open(SIZE_FILE, 'r') as f:
+                content = f.read().strip()
+            if ',' in content:
+                parts = content.split(',')
+                if parts[0].isdigit():
+                    last_size = int(parts[0])
+                    ref_time = parts[1]
+            elif content.isdigit():
+                last_size = int(content)
+                mtime = os.path.getmtime(SIZE_FILE)
+                ref_time = datetime.fromtimestamp(mtime).strftime('%Y-%m-%d %H:%M:%S')
+        except:
+            pass
+    return last_size, ref_time
+
+def write_last_size(size, ref_time_str=None):
+    if not ref_time_str:
+        ref_time_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    try:
+        with open(SIZE_FILE, 'w') as f:
+            f.write(f"{size},{ref_time_str}")
+    except Exception as e:
+        write_log(f"Error al escribir SIZE_FILE: {e}")
+
 def generate_html_report():
     if not os.path.exists(LOG_FILE):
         return
@@ -91,11 +120,10 @@ def generate_html_report():
                 next_check_subtext = f"Error al calcular: {ex}"
         
         current_size = "Desconocido"
-        if os.path.exists(SIZE_FILE):
-            with open(SIZE_FILE, 'r') as f:
-                sz = f.read().strip()
-                if sz.isdigit():
-                    current_size = f"{int(sz)/1024/1024:.2f} MB ({int(sz):,} bytes)"
+        size_ref_time = "Nunca"
+        last_sz_val, size_ref_time = read_last_size()
+        if last_sz_val is not None:
+            current_size = f"{last_sz_val/1024/1024:.2f} MB ({last_sz_val:,} bytes)"
 
         rows_html = ""
         for log in logs[:50]:
@@ -394,7 +422,7 @@ def generate_html_report():
             <div class="card">
                 <div class="card-title">Tamaño Registrado del Archivo</div>
                 <div class="card-value">{current_size}</div>
-                <div class="card-subtext">Solo aumenta ante nuevas inserciones</div>
+                <div class="card-subtext">Referencia fijada el: {size_ref_time} (sin cambios)</div>
             </div>
             <div class="card" style="border-color: rgba(59, 130, 246, 0.2); background: rgba(59, 130, 246, 0.01);">
                 <div class="card-title" style="color: var(--blue);">Próxima Verificación Programada</div>
@@ -720,17 +748,11 @@ def main():
             release_lock()
             return
 
-        last_size = None
-        if os.path.exists(SIZE_FILE):
-            with open(SIZE_FILE, 'r') as f:
-                content = f.read().strip()
-                if content.isdigit():
-                    last_size = int(content)
+        last_size, size_ref_time = read_last_size()
 
         if last_size is None:
             write_log(f"Inicializando. Guardando tamaño actual: {remote_size} bytes.")
-            with open(SIZE_FILE, 'w') as f:
-                f.write(str(remote_size))
+            write_last_size(remote_size)
             if not os.path.exists(CSV_PATH):
                 write_log("Descargando archivo por primera vez...")
                 download_file(ctx)
@@ -787,8 +809,7 @@ def main():
             except Exception as e:
                 write_log(f"Excepción al ejecutar el script de cálculo: {e}")
             
-            with open(SIZE_FILE, 'w') as f:
-                f.write(str(remote_size))
+            write_last_size(remote_size)
             
             msg_text = f"El archivo SRI aumentó de {last_size/1024/1024:.2f}MB a {remote_size/1024/1024:.2f}MB. Resumen de {month} {year} enviado por correo."
             send_windows_notification("Incremento en archivo SRI", msg_text)
@@ -797,8 +818,7 @@ def main():
         else:
             if remote_size < last_size:
                 write_log(f"El tamaño remoto disminuyó ({remote_size} bytes) en comparación con el registrado ({last_size} bytes). No se descarga.")
-                with open(SIZE_FILE, 'w') as f:
-                    f.write(str(remote_size))
+                write_last_size(remote_size)
             else:
                 write_log("El archivo no ha cambiado de tamaño desde la última verificación.")
 
