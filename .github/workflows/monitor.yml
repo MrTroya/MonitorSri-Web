@@ -37,7 +37,7 @@ jobs:
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
-        git add last_size.txt change_history.log last_run_time.txt execution_report.html || true
+        git add last_size.txt change_history.log last_run_time.txt index.html || true
         if ! git diff --cached --quiet; then
           git commit -m "Auto-update SRI state and logs [skip ci]"
           git push

@@ -21,7 +21,7 @@ CSV_PATH = os.path.join(BASE_DIR, 'SRI_Vehiculos_Nuevos_2026.csv')
 SIZE_FILE = os.path.join(BASE_DIR, 'last_size.txt')
 LOG_FILE = os.path.join(BASE_DIR, 'change_history.log')
 LAST_RUN_TIME_FILE = os.path.join(BASE_DIR, 'last_run_time.txt')
-REPORT_HTML_PATH = os.path.join(BASE_DIR, 'execution_report.html')
+REPORT_HTML_PATH = os.path.join(BASE_DIR, 'index.html')
 
 URL = 'https://descargas.sri.gob.ec/download/datosAbiertos/SRI_Vehiculos_Nuevos_2026.csv'
 
