@@ -780,6 +780,38 @@ def send_email_notification(old_size, new_size, month, year, total_sales, table)
         write_log(f"Error al enviar el correo: {e}")
 
 
+def send_error_notification(error_message):
+    if not GMAIL_USER or not GMAIL_APP_PASSWORD:
+        write_log("Configuración de correo no establecida o incompleta. Saltando envío de email de error.")
+        return
+
+    subject = "[ERROR] Monitor SRI - Fallo en Verificación"
+    body = (
+        f"Se ha detectado un error durante la ejecución del Monitor SRI (Versión Web/Actions).\n\n"
+        f"Detalles del error:\n"
+        f"--------------------------------------------------\n"
+        f"{error_message}\n"
+        f"--------------------------------------------------\n\n"
+        f"Por favor revisa el historial o la pestaña de Actions en tu repositorio para más detalles."
+    )
+
+    msg = MIMEMultipart()
+    msg['From'] = GMAIL_USER
+    msg['To'] = RECEIVER_USER
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'plain'))
+
+    try:
+        write_log("Enviando correo de notificación de error...")
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=15) as server:
+            server.login(GMAIL_USER, GMAIL_APP_PASSWORD)
+            server.sendmail(GMAIL_USER, RECEIVER_USER, msg.as_string())
+        write_log("Correo de error enviado con éxito.")
+    except Exception as e:
+        print(f"Error al enviar el correo de error: {e}")
+
+
+
 def download_file(ctx):
     req = urllib.request.Request(URL, headers={'User-Agent': 'Mozilla/5.0'})
     os.makedirs(os.path.dirname(CSV_PATH), exist_ok=True)
@@ -973,8 +1005,16 @@ def main():
                         table = m_table.group(1).strip()
                 else:
                     write_log(f"Error al ejecutar el script de cálculo: {result.stderr}")
+                    try:
+                        send_error_notification(f"El script de cálculo (procesador_sri.py) falló con código {result.returncode}.\n\nStderr:\n{result.stderr}")
+                    except Exception as ex:
+                        print(f"Error al enviar correo de error de cálculo: {ex}")
             except Exception as e:
                 write_log(f"Excepción al ejecutar el script de cálculo: {e}")
+                try:
+                    send_error_notification(f"Excepción al ejecutar procesador_sri.py:\n\n{e}")
+                except Exception as ex:
+                    print(f"Error al enviar correo de excepción de cálculo: {ex}")
             
             write_last_size(remote_size)
             
@@ -991,6 +1031,10 @@ def main():
 
     except Exception as e:
         write_log(f"Error durante la verificación: {e}")
+        try:
+            send_error_notification(f"Fallo en la ejecución principal de check_sri_change.py:\n\n{e}")
+        except Exception as ex:
+            print(f"Error al enviar correo de error general: {ex}")
     
     release_lock()
 
