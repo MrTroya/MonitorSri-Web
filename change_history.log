@@ -209,3 +209,25 @@
 [2026-06-02 14:30:31] El archivo no ha cambiado de tamaño desde la última verificación.
 [2026-06-02 14:36:12] El archivo no ha cambiado de tamaño desde la última verificación.
 [2026-06-02 14:43:34] El archivo no ha cambiado de tamaño desde la última verificación.
+[2026-06-02 14:56:46] ¡Incremento detectado! Tamaño anterior: 1000 bytes. Nuevo tamaño: 31062270 bytes.
+[2026-06-02 14:56:46] Descargando el archivo actualizado...
+[2026-06-02 14:57:10] Ejecutando script de cálculo y consolidación...
+[2026-06-02 14:58:12] Error al ejecutar el script de cálculo: Traceback (most recent call last):
+  File "/home/runner/work/MonitorSri-Web/MonitorSri-Web/procesador_sri.py", line 316, in <module>
+    main()
+  File "/home/runner/work/MonitorSri-Web/MonitorSri-Web/procesador_sri.py", line 198, in main
+    df_2023 = load_and_clean_2023(args.input_dir)
+  File "/home/runner/work/MonitorSri-Web/MonitorSri-Web/procesador_sri.py", line 104, in load_and_clean_2023
+    df = df[cols_to_keep].copy()
+  File "/opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/pandas/core/frame.py", line 4119, in __getitem__
+    indexer = self.columns._get_indexer_strict(key, "columns")[1]
+  File "/opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/pandas/core/indexes/base.py", line 6212, in _get_indexer_strict
+    self._raise_if_missing(keyarr, indexer, axis_name)
+  File "/opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/pandas/core/indexes/base.py", line 6264, in _raise_if_missing
+    raise KeyError(f"{not_found} not in index")
+KeyError: "['CODIGO DE VEHICULO', 'FECHA PROCESO (MM/DD/AA)'] not in index"
+
+[2026-06-02 14:58:12] Enviando correo de notificación de error...
+[2026-06-02 14:58:13] Correo de error enviado con éxito.
+[2026-06-02 14:58:13] Enviando correo de notificación...
+[2026-06-02 14:58:14] Correo enviado con éxito.
