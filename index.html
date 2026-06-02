@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <meta http-equiv="refresh" content="60">
+    <title>Reporte de Ejecuciones SRI - Web</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --green: #10b981;
+            --blue: #3b82f6;
+            --red: #ef4444;
+            --gray: #64748b;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(135deg, #3b82f6, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .last-update-header {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Dashboard Cards */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            backdrop-filter: blur(12px);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .card-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .card-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .card-subtext {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        /* Log Table */
+        .table-container {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        th {
+            background: rgba(0, 0, 0, 0.2);
+            color: var(--text-primary);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.015);
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .badge-gray {
+            background: rgba(100, 116, 139, 0.15);
+            color: #cbd5e1;
+            border: 1px solid rgba(100, 116, 139, 0.3);
+        }
+
+        .badge-green {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .badge-blue {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .badge-red {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* Botón de Ejecución Forzada */
+        .btn-force {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s ease, filter 0.2s ease;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        .btn-force:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+        }
+        .btn-force:active {
+            transform: translateY(0);
+        }
+
+        /* Modal / Overlay */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: #1e293b;
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            animation: scaleUp 0.3s ease-out;
+        }
+        @keyframes scaleUp {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-top: 0;
+            color: #f8fafc;
+            margin-bottom: 0.75rem;
+        }
+        .modal-body {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin: 1rem 0 1.5rem 0;
+            text-align: left;
+        }
+        .btn-close {
+            background: var(--blue);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.8rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background-color 0.2s;
+        }
+        .btn-close:hover {
+            background-color: #1d4ed8;
+        }
+
+        /* Login Page Styles */
+        .login-overlay {
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 1rem;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 400px;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            text-align: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #3b82f6, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-field {
+            margin-bottom: 1.25rem;
+            text-align: left;
+        }
+
+        .login-field label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .login-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+
+        .login-input:focus {
+            border-color: var(--blue);
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .btn-login {
+            width: 100%;
+            background: linear-gradient(135deg, #3b82f6, #10b981);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s ease, filter 0.2s ease;
+            font-size: 0.95rem;
+            margin-top: 1rem;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+
+        .btn-login:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .login-error {
+            color: var(--red);
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            display: none;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <!-- Pantalla de Login -->
+    <div id="login-overlay" class="login-overlay">
+        <div class="login-card">
+            <div class="login-logo">Monitor SRI - Acceso</div>
+            <form onsubmit="handleLogin(event)">
+                <div class="login-field">
+                    <label for="username">Usuario</label>
+                    <input type="text" id="username" class="login-input" required autocomplete="username">
+                </div>
+                <div class="login-field">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" class="login-input" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn-login">Iniciar Sesión</button>
+                <div id="login-error" class="login-error">Usuario o contraseña incorrectos.</div>
+            </form>
+        </div>
+    </div>
+
+    <div class="container" id="dashboard-content" style="display: none;">
+        <header>
+            <div>
+                <h1>Reporte de Monitoreo - SRI (Web Version)</h1>
+                <div class="last-update-header">Reporte generado automáticamente desde GitHub Actions o ejecución local.</div>
+            </div>
+            <div>
+                <button class="btn-force" onclick="showModal()">Forzar Ejecución</button>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="card-title">Última Verificación</div>
+                <div class="card-value">2026-06-02 19:20:56</div>
+                <div class="card-subtext">Reloj del sistema ejecutor</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Último Estado Registrado</div>
+                <div class="card-value" style="font-size: 1.05rem;">El archivo no ha cambiado de tamaño desde la última verificación.</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Tamaño Registrado del Archivo</div>
+                <div class="card-value">29.62 MB (31,062,270 bytes)</div>
+                <div class="card-subtext">Referencia fijada el: 2026-06-02 19:20:45 (sin cambios)</div>
+            </div>
+            <div class="card" style="border-color: rgba(59, 130, 246, 0.2); background: rgba(59, 130, 246, 0.01);">
+                <div class="card-title" style="color: var(--blue);">Próxima Verificación Programada</div>
+                <div class="card-value" style="color: #60a5fa;" id="next-check-time">2026-06-02 19:25:56</div>
+                <div class="card-subtext" style="color: var(--text-secondary); display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+                    <span id="next-check-sub">Frecuencia: cada 5 min</span>
+                    <span id="countdown" style="font-weight: 700; color: #60a5fa; background: rgba(59, 130, 246, 0.15); padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.75rem; min-width: 70px; text-align: center;">--:--</span>
+                </div>
+            </div>
+        </div>
+
+        <h2 style="font-size: 1.2rem; margin-bottom: 1rem; font-weight: 600;">Historial de Ejecuciones (Últimas 50)</h2>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 200px;">Fecha y Hora</th>
+                        <th style="width: 150px;">Tipo de Evento</th>
+                        <th>Mensaje de Log</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+            <tr>
+                <td>2026-06-02 19:20:56</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 13:58:27</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 13:53:27</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 13:48:27</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 13:43:27</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 13:38:24</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 13:38:00</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 13:36:17</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>[WATCHDOG] Detectada instancia previa colgada (PID: 5456). Forzando terminación...</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 13:34:04</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 13:34:03</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 13:08:24</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 13:03:24</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 12:58:24</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 12:53:24</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 12:48:25</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 12:43:24</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 12:38:25</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 12:33:25</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 12:28:24</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 12:23:24</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 12:18:25</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 12:13:24</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 12:08:24</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 12:06:26</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 12:03:24</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 11:58:24</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 11:55:19</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 11:53:24</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 11:50:32</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 11:48:24</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 11:45:30</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 11:28:59</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 11:26:14</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 11:11:41</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 10:03:25</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 09:58:25</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 09:53:26</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 09:48:25</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 09:43:25</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 09:38:26</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 09:33:25</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 09:28:25</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 09:23:25</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 09:20:50</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 09:13:25</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 09:08:25</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 09:03:25</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 08:58:25</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 08:53:25</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+            <tr>
+                <td>2026-06-02 08:48:25</td>
+                <td><span class="badge badge-gray">CHEQUEO OK</span></td>
+                <td>El archivo no ha cambiado de tamaño desde la última verificación.</td>
+            </tr>
+            
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal para ejecución manual -->
+    <div id="forceModal" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-title">¿Cómo forzar la ejecución?</div>
+            <div class="modal-body">
+                Si estás en local:<br>
+                1. Abre la carpeta del proyecto local.<br>
+                2. Haz doble clic sobre <strong>Reiniciar_Monitor.bat</strong>.<br><br>
+                Si deseas forzarlo en la nube:<br>
+                1. Ve a tu repositorio en GitHub.<br>
+                2. Entra a la pestaña <strong>Actions</strong>.<br>
+                3. Selecciona el workflow <strong>SRI Monitor Web</strong> y presiona <strong>Run workflow</strong>.
+            </div>
+            <button class="btn-close" onclick="closeModal(event)">Entendido</button>
+        </div>
+    </div>
+
+    <script>
+        function showModal() {
+            document.getElementById('forceModal').style.display = 'flex';
+        }
+        function closeModal(event) {
+            document.getElementById('forceModal').style.display = 'none';
+        }
+
+        // Authentication check
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function checkAuth() {
+            const authed = sessionStorage.getItem('sri_authenticated');
+            if (authed === 'true') {
+                document.getElementById('login-overlay').style.display = 'none';
+                document.getElementById('dashboard-content').style.display = 'block';
+                startCountdown();
+            } else {
+                document.getElementById('login-overlay').style.display = 'flex';
+                document.getElementById('dashboard-content').style.display = 'none';
+            }
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            const userVal = document.getElementById('username').value;
+            const passVal = document.getElementById('password').value;
+            
+            const userHash = await sha256(userVal);
+            const passHash = await sha256(passVal);
+            
+            if (userHash === '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918' && 
+                passHash === 'd79b20f547f736d106370abe65777c97ac337a08190b9d2e123a9e7fabac1afd') {
+                sessionStorage.setItem('sri_authenticated', 'true');
+                document.getElementById('login-overlay').style.display = 'none';
+                document.getElementById('dashboard-content').style.display = 'block';
+                startCountdown();
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+                document.getElementById('password').value = '';
+            }
+        }
+
+        // Countdown Timer Logic
+        function startCountdown() {
+            const nextCheckStr = document.getElementById('next-check-time').innerText;
+            if (nextCheckStr === "Desconocido" || nextCheckStr.includes("Nunca") || nextCheckStr === "Pausado" || nextCheckStr.includes("GitHub")) return;
+            
+            const parts = nextCheckStr.split(' ');
+            const dateParts = parts[0].split('-');
+            const timeParts = parts[1].split(':');
+            
+            const targetDate = new Date(
+                parseInt(dateParts[0]),
+                parseInt(dateParts[1]) - 1,
+                parseInt(dateParts[2]),
+                parseInt(timeParts[0]),
+                parseInt(timeParts[1]),
+                parseInt(timeParts[2])
+            );
+            
+            const countdownEl = document.getElementById('countdown');
+            
+            function update() {
+                const now = new Date();
+                const diffMs = targetDate - now;
+                
+                if (diffMs <= 0) {
+                    countdownEl.innerText = "Ejecutando...";
+                    countdownEl.style.background = "rgba(16, 185, 129, 0.15)";
+                    countdownEl.style.color = "#34d399";
+                    
+                    if (!window.reloadScheduled) {
+                        window.reloadScheduled = true;
+                        setTimeout(function() {
+                            location.reload();
+                        }, 15000);
+                    }
+                    return;
+                }
+                
+                const totalSeconds = Math.floor(diffMs / 1000);
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+                
+                let timeStr = "";
+                if (hours > 0) {
+                    timeStr += hours + "h ";
+                }
+                if (minutes > 0 || hours > 0) {
+                    timeStr += minutes + "m ";
+                }
+                timeStr += seconds + "s";
+                
+                countdownEl.innerText = "En " + timeStr;
+            }
+            
+            update();
+            setInterval(update, 1000);
+        }
+        
+        window.addEventListener('DOMContentLoaded', checkAuth);
+    </script>
+</html>
