@@ -6,7 +6,11 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import subprocess
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
+
+def get_local_now():
+    return datetime.now(timezone(timedelta(hours=-5)))
+
 
 # --- CONFIGURACIÓN DE CORREO GMAIL ---
 # Leídos de variables de entorno para ejecución segura en Actions, con fallback para local
@@ -40,14 +44,14 @@ def read_last_size():
             elif content.isdigit():
                 last_size = int(content)
                 mtime = os.path.getmtime(SIZE_FILE)
-                ref_time = datetime.fromtimestamp(mtime).strftime('%Y-%m-%d %H:%M:%S')
+                ref_time = datetime.fromtimestamp(mtime, timezone(timedelta(hours=-5))).strftime('%Y-%m-%d %H:%M:%S')
         except:
             pass
     return last_size, ref_time
 
 def write_last_size(size, ref_time_str=None):
     if not ref_time_str:
-        ref_time_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        ref_time_str = get_local_now().strftime('%Y-%m-%d %H:%M:%S')
     try:
         with open(SIZE_FILE, 'w') as f:
             f.write(f"{size},{ref_time_str}")
@@ -709,7 +713,7 @@ def generate_html_report():
         print(f"Error al generar reporte HTML: {e}")
 
 def write_log(message):
-    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    timestamp = get_local_now().strftime('%Y-%m-%d %H:%M:%S')
     log_message = f"[{timestamp}] {message}\n"
     print(log_message.strip())
     with open(LOG_FILE, 'a', encoding='utf-8') as f:
@@ -869,7 +873,7 @@ def main():
     ensure_task_enabled()
     acquire_lock()
     
-    now = datetime.now()
+    now = get_local_now()
     
     try:
         with open(LAST_RUN_TIME_FILE, 'w') as f:
