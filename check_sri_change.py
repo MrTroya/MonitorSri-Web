@@ -632,8 +632,8 @@ def generate_html_report():
             const userHash = await sha256(userVal);
             const passHash = await sha256(passVal);
             
-            if (userHash === '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918' && 
-                passHash === 'd79b20f547f736d106370abe65777c97ac337a08190b9d2e123a9e7fabac1afd') {{
+            if (userHash === '5077c8244f91caa24750d53ba9194480ae0ea5bd174c122900b369c77aeb5a81' && 
+                passHash === 'ee1e896d74398021931f729f1417d040ead1e977ab0686c9b508badc66bbc1a8') {{
                 sessionStorage.setItem('sri_authenticated', 'true');
                 document.getElementById('login-overlay').style.display = 'none';
                 document.getElementById('dashboard-content').style.display = 'block';
