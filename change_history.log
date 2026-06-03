@@ -242,3 +242,4 @@ KeyError: "['CODIGO DE VEHICULO', 'FECHA PROCESO (MM/DD/AA)'] not in index"
 [2026-06-03 08:54:51] Script de cálculo ejecutado con éxito.
 [2026-06-03 08:54:51] Enviando correo de notificación...
 [2026-06-03 08:54:52] Correo enviado con éxito.
+[2026-06-03 09:58:47] El archivo no ha cambiado de tamaño desde la última verificación.
