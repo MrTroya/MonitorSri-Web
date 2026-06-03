@@ -92,87 +92,98 @@ def ensure_csv_file(year, target_dir):
             
     return filepath
 
+def normalize_column_name(col):
+    import unicodedata
+    col_str = str(col).strip().upper()
+    col_str = ''.join(c for c in unicodedata.normalize('NFD', col_str) if unicodedata.category(c) != 'Mn')
+    col_str = re.sub(r'[\s_\-]+', ' ', col_str)
+    return col_str
+
+def load_and_clean_generic(filepath, year):
+    df = pd.read_csv(filepath, sep=';', encoding='latin-1')
+    
+    actual_cols = df.columns.tolist()
+    
+    def find_col(patterns, exact=False):
+        for col in actual_cols:
+            norm = normalize_column_name(col)
+            for pat in patterns:
+                norm_pat = normalize_column_name(pat)
+                if exact:
+                    if norm == norm_pat:
+                        return col
+                else:
+                    if norm_pat in norm:
+                        return col
+        return None
+
+    cat_col = find_col(["CATEGORÍA", "CATEGORIA"])
+    cod_col = find_col(["CÓDIGO DE VEHÍCULO", "CODIGO DE VEHICULO", "CODIGO VEHICULO"])
+    trans_col = find_col(["TIPO TRANSACCIÓN", "TIPO TRANSACCION", "TRANSACCIÓN", "TRANSACCION"])
+    marca_col = find_col(["MARCA"], exact=True)
+    mod_col = find_col(["MODELO"], exact=True)
+    clase_col = find_col(["CLASE"], exact=True)
+    subclase_col = find_col(["SUB CLASE", "SUBCLASE"])
+    tipo_col = find_col(["TIPO"], exact=True)
+    proc_col = find_col(["FECHA PROCESO", "FECHA_PROCESO"])
+    compra_col = find_col(["FECHA COMPRA", "FECHA_COMPRA"])
+    
+    missing = []
+    if not cat_col: missing.append("CATEGORÍA")
+    if not cod_col: missing.append("CODIGO DE VEHICULO")
+    if not trans_col: missing.append("TIPO TRANSACCIÓN")
+    if not marca_col: missing.append("MARCA")
+    if not mod_col: missing.append("MODELO")
+    if not clase_col: missing.append("CLASE")
+    if not subclase_col: missing.append("SUB CLASE")
+    if not tipo_col: missing.append("TIPO")
+    if not proc_col: missing.append("FECHA PROCESO")
+    if not compra_col: missing.append("FECHA COMPRA")
+    
+    if missing:
+        raise KeyError(f"Columnas requeridas no encontradas en el archivo de {year}: {missing}. Columnas disponibles: {actual_cols}")
+        
+    df_sliced = df[[cat_col, cod_col, trans_col, marca_col, mod_col, clase_col, subclase_col, tipo_col, proc_col, compra_col]].copy()
+    df_sliced.columns = [
+        "CATEGORÍA", "CODIGO DE VEHICULO", "TIPO TRANSACCIÓN", "MARCA", "MODELO",
+        "CLASE", "SUB CLASE", "TIPO", "FECHA PROCESO", "FECHA COMPRA"
+    ]
+    
+    df_sliced = df_sliced[df_sliced["CLASE"] != "MOTOCICLETA"]
+    
+    def parse_date_robust(series):
+        sample = series.dropna().head(5).tolist()
+        has_letters = any(any(c.isalpha() for c in str(s)) for s in sample)
+        
+        if has_letters:
+            return series.apply(parse_spanish_date)
+        else:
+            return pd.to_datetime(series, errors='coerce', dayfirst=True)
+
+    df_sliced["FECHA PROCESO"] = parse_date_robust(df_sliced["FECHA PROCESO"])
+    df_sliced["FECHA COMPRA"] = parse_date_robust(df_sliced["FECHA COMPRA"])
+    
+    return df_sliced
+
 def load_and_clean_2023(source_dir):
     """Loads and cleans SRI_Vehiculos_Nuevos_2023.csv"""
     filepath = ensure_csv_file(2023, source_dir)
-    df = pd.read_csv(filepath, sep=';', encoding='latin-1')
-    
-    cols_to_keep = [
-        "CATEGORÍA", "CODIGO DE VEHICULO", "TIPO TRANSACCIÓN", "MARCA", "MODELO",
-        "CLASE", "SUB CLASE", "TIPO", "FECHA PROCESO (MM/DD/AA)", "FECHA COMPRA (DD/MM/AA)"
-    ]
-    df = df[cols_to_keep].copy()
-    df = df[df["CLASE"] != "MOTOCICLETA"]
-    df = df.rename(columns={
-        "FECHA PROCESO (MM/DD/AA)": "FECHA PROCESO",
-        "FECHA COMPRA (DD/MM/AA)": "FECHA COMPRA"
-    })
-    
-    df["FECHA PROCESO"] = df["FECHA PROCESO"].apply(parse_spanish_date)
-    df["FECHA COMPRA"] = df["FECHA COMPRA"].apply(parse_spanish_date)
-    return df
+    return load_and_clean_generic(filepath, 2023)
 
 def load_and_clean_2024(source_dir):
     """Loads and cleans SRI_Vehiculos_Nuevos_2024.csv"""
     filepath = ensure_csv_file(2024, source_dir)
-    df = pd.read_csv(filepath, sep=';', encoding='latin-1')
-    
-    cols_to_keep = [
-        "CATEGORÍA", "CODIGO DE VEHICULO", "TIPO TRANSACCIÓN", "MARCA", "MODELO",
-        "CLASE", "SUB CLASE", "TIPO", "FECHA PROCESO (MM/DD/AA)", "FECHA COMPRA (DD/MM/AA)"
-    ]
-    df = df[cols_to_keep].copy()
-    df = df[df["CLASE"] != "MOTOCICLETA"]
-    df = df.rename(columns={
-        "FECHA PROCESO (MM/DD/AA)": "FECHA PROCESO",
-        "FECHA COMPRA (DD/MM/AA)": "FECHA COMPRA"
-    })
-    
-    df["FECHA PROCESO"] = pd.to_datetime(df["FECHA PROCESO"], format='%d/%m/%Y', errors='coerce')
-    df["FECHA COMPRA"] = pd.to_datetime(df["FECHA COMPRA"], format='%d/%m/%Y', errors='coerce')
-    return df
+    return load_and_clean_generic(filepath, 2024)
 
 def load_and_clean_2025(source_dir):
     """Loads and cleans SRI_Vehiculos_Nuevos_2025.csv"""
     filepath = ensure_csv_file(2025, source_dir)
-    df = pd.read_csv(filepath, sep=';', encoding='latin-1')
-    
-    cols_to_keep = [
-        "CATEGORÍA", "CÓDIGO DE VEHÍCULO", "TIPO TRANSACCIÓN", "MARCA", "MODELO",
-        "CLASE", "SUB CLASE", "TIPO", "FECHA PROCESO (DD/MM/AAAA)", "FECHA COMPRA (DD/MM/AAAA)"
-    ]
-    df = df[cols_to_keep].copy()
-    df = df[df["CLASE"] != "MOTOCICLETA"]
-    df = df.rename(columns={
-        "CÓDIGO DE VEHÍCULO": "CODIGO DE VEHICULO",
-        "FECHA PROCESO (DD/MM/AAAA)": "FECHA PROCESO",
-        "FECHA COMPRA (DD/MM/AAAA)": "FECHA COMPRA"
-    })
-    
-    df["FECHA PROCESO"] = pd.to_datetime(df["FECHA PROCESO"], format='%d/%m/%Y', errors='coerce')
-    df["FECHA COMPRA"] = pd.to_datetime(df["FECHA COMPRA"], format='%d/%m/%Y', errors='coerce')
-    return df
+    return load_and_clean_generic(filepath, 2025)
 
 def load_and_clean_2026(source_dir):
     """Loads and cleans SRI_Vehiculos_Nuevos_2026.csv"""
     filepath = ensure_csv_file(2026, source_dir)
-    df = pd.read_csv(filepath, sep=';', encoding='latin-1')
-    
-    cols_to_keep = [
-        "CATEGORÍA", "CÓDIGO DE VEHÍCULO", "TIPO TRANSACCIÓN", "MARCA", "MODELO",
-        "CLASE", "SUB CLASE", "TIPO", "FECHA PROCESO (DD/MM/AAAA)", "FECHA COMPRA (DD/MM/AAAA)"
-    ]
-    df = df[cols_to_keep].copy()
-    df = df[df["CLASE"] != "MOTOCICLETA"]
-    df = df.rename(columns={
-        "CÓDIGO DE VEHÍCULO": "CODIGO DE VEHICULO",
-        "FECHA PROCESO (DD/MM/AAAA)": "FECHA PROCESO",
-        "FECHA COMPRA (DD/MM/AAAA)": "FECHA COMPRA"
-    })
-    
-    df["FECHA PROCESO"] = pd.to_datetime(df["FECHA PROCESO"], format='%d/%m/%Y', errors='coerce')
-    df["FECHA COMPRA"] = pd.to_datetime(df["FECHA COMPRA"], format='%d/%m/%Y', errors='coerce')
-    return df
+    return load_and_clean_generic(filepath, 2026)
 
 def main():
     parser = argparse.ArgumentParser(description="Procesa datos vehiculares SRI replicando la lógica de Power Query.")
