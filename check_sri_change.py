@@ -16,7 +16,7 @@ def get_local_now():
 # Leídos de variables de entorno para ejecución segura en Actions, con fallback para local
 GMAIL_USER = os.getenv('GMAIL_USER', 'cesartroyasherdek@gmail.com')
 GMAIL_APP_PASSWORD = os.getenv('GMAIL_APP_PASSWORD', 'ekvo gsau yfsc iatp')
-RECEIVER_USER = os.getenv('RECEIVER_USER', 'cesar.troya@gm.com')
+RECEIVER_USER = os.getenv('RECEIVER_USER', 'cesartroyasherdek@gmail.com')
 
 # --- RUTAS DE ARCHIVOS ---
 # Modificado para ser totalmente relativo al directorio donde se ejecuta el script
