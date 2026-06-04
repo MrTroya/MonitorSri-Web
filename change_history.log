@@ -258,3 +258,7 @@ KeyError: "['CODIGO DE VEHICULO', 'FECHA PROCESO (MM/DD/AA)'] not in index"
 [2026-06-04 08:48:38] Intento 2: Fallo en la conexión (<urlopen error [Errno 104] Connection reset by peer>).
 [2026-06-04 08:48:43] Intento 3: Fallo en la conexión (Remote end closed connection without response).
 [2026-06-04 08:48:43] Monitoreo abortado: No se pudo obtener un tamaño de archivo válido (> 0 bytes) tras los reintentos.
+[2026-06-04 11:40:11] Intento 1: Fallo en la conexión (Remote end closed connection without response).
+[2026-06-04 11:40:16] Intento 2: Fallo en la conexión (Remote end closed connection without response).
+[2026-06-04 11:40:22] Intento 3: Fallo en la conexión (Remote end closed connection without response).
+[2026-06-04 11:40:22] Monitoreo abortado: No se pudo obtener un tamaño de archivo válido (> 0 bytes) tras los reintentos.
