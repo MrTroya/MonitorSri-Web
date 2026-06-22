@@ -431,3 +431,5 @@ KeyError: "['CODIGO DE VEHICULO', 'FECHA PROCESO (MM/DD/AA)'] not in index"
 [2026-06-22 00:31:04] El archivo no ha cambiado de tamaño desde la última verificación.
 [2026-06-22 06:17:39] El archivo no ha cambiado de tamaño desde la última verificación.
 [2026-06-22 11:04:09] El archivo no ha cambiado de tamaño desde la última verificación.
+[2026-06-22 14:40:07] Intento 1: Fallo en la conexión (Remote end closed connection without response).
+[2026-06-22 14:40:13] El archivo no ha cambiado de tamaño desde la última verificación.
