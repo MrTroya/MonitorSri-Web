@@ -541,3 +541,9 @@ KeyError: "['CODIGO DE VEHICULO', 'FECHA PROCESO (MM/DD/AA)'] not in index"
 [2026-07-02 10:34:24] El archivo no ha cambiado de tamaño desde la última verificación.
 [2026-07-02 12:15:00] El archivo no ha cambiado de tamaño desde la última verificación.
 [2026-07-02 13:50:55] El archivo no ha cambiado de tamaño desde la última verificación.
+[2026-07-02 15:13:04] ¡Incremento detectado! Tamaño anterior: 39565485 bytes. Nuevo tamaño: 48494212 bytes.
+[2026-07-02 15:13:04] Descargando el archivo actualizado...
+[2026-07-02 15:13:43] Ejecutando script de cálculo y consolidación...
+[2026-07-02 15:18:22] Script de cálculo ejecutado con éxito.
+[2026-07-02 15:18:22] Enviando correo de notificación...
+[2026-07-02 15:18:23] Correo enviado con éxito.
