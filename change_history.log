@@ -555,3 +555,21 @@ KeyError: "['CODIGO DE VEHICULO', 'FECHA PROCESO (MM/DD/AA)'] not in index"
 [2026-07-03 03:26:25] El archivo no ha cambiado de tamaño desde la última verificación.
 [2026-07-03 06:10:24] El archivo no ha cambiado de tamaño desde la última verificación.
 [2026-07-03 08:11:53] El archivo no ha cambiado de tamaño desde la última verificación.
+[2026-07-03 10:26:14] ¡Incremento detectado! Tamaño anterior: 48494212 bytes. Nuevo tamaño: 48500802 bytes.
+[2026-07-03 10:26:14] Descargando el archivo actualizado...
+[2026-07-03 10:27:00] Ejecutando script de cálculo y consolidación...
+[2026-07-03 10:31:05] Error al ejecutar el script de cálculo: Traceback (most recent call last):
+  File "/home/runner/work/MonitorSri-Web/MonitorSri-Web/procesador_sri.py", line 327, in <module>
+    main()
+  File "/home/runner/work/MonitorSri-Web/MonitorSri-Web/procesador_sri.py", line 221, in main
+    df_2026 = load_and_clean_2026(args.input_dir)
+  File "/home/runner/work/MonitorSri-Web/MonitorSri-Web/procesador_sri.py", line 186, in load_and_clean_2026
+    return load_and_clean_generic(filepath, 2026)
+  File "/home/runner/work/MonitorSri-Web/MonitorSri-Web/procesador_sri.py", line 144, in load_and_clean_generic
+    raise KeyError(f"Columnas requeridas no encontradas en el archivo de {year}: {missing}. Columnas disponibles: {actual_cols}")
+KeyError: "Columnas requeridas no encontradas en el archivo de 2026: ['CATEGORÍA', 'CODIGO DE VEHICULO', 'TIPO TRANSACCIÓN']. Columnas disponibles: ['ï»¿CATEGORÃ\\x8dA', 'CÃ\\x93DIGO DE VEHÃ\\x8dCULO', 'TIPO TRANSACCIÃ\\x93N', 'MARCA', 'MODELO', 'PAIS', 'AÃ\\x91O MODELO', 'CLASE', 'SUB CLASE', 'TIPO', 'AVALUO', 'FECHA PROCESO (DD/MM/AAAA)', 'TIPO SERVICIO', 'CILINDRAJE', 'TIPO COMBUSTIBLE', 'FECHA COMPRA  (DD/MM/AAAA)', 'CANTÃ\\x93N', 'COLOR 1', 'COLOR 2', 'PERSONA NATURAL - JURÃ\\x8dDICA']"
+
+[2026-07-03 10:31:05] Enviando correo de notificación de error...
+[2026-07-03 10:31:07] Correo de error enviado con éxito.
+[2026-07-03 10:31:07] Enviando correo de notificación...
+[2026-07-03 10:31:09] Correo enviado con éxito.
