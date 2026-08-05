@@ -1046,3 +1046,7 @@ KeyError: "Columnas requeridas no encontradas en el archivo de 2026: ['CATEGORÍ
 [2026-08-04 17:32:33] El archivo no ha cambiado de tamaño desde la última verificación.
 [2026-08-04 18:36:29] El archivo no ha cambiado de tamaño desde la última verificación.
 [2026-08-04 20:01:53] El archivo no ha cambiado de tamaño desde la última verificación.
+[2026-08-04 23:21:15] Intento 1: Fallo en la conexión (<urlopen error timed out>).
+[2026-08-04 23:21:36] Intento 2: Fallo en la conexión (<urlopen error timed out>).
+[2026-08-04 23:21:49] Intento 3: Fallo en la conexión (Remote end closed connection without response).
+[2026-08-04 23:21:49] Monitoreo abortado: No se pudo obtener un tamaño de archivo válido (> 0 bytes) tras los reintentos.
