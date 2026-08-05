@@ -1051,3 +1051,4 @@ KeyError: "Columnas requeridas no encontradas en el archivo de 2026: ['CATEGORÍ
 [2026-08-04 23:21:49] Intento 3: Fallo en la conexión (Remote end closed connection without response).
 [2026-08-04 23:21:49] Monitoreo abortado: No se pudo obtener un tamaño de archivo válido (> 0 bytes) tras los reintentos.
 [2026-08-05 02:08:00] El archivo no ha cambiado de tamaño desde la última verificación.
+[2026-08-05 04:47:16] El archivo no ha cambiado de tamaño desde la última verificación.
