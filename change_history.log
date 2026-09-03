@@ -1799,3 +1799,21 @@ KeyError: "Columnas requeridas no encontradas en el archivo de 2026: ['CATEGORÍ
 [2026-09-03 08:36:30] El archivo no ha cambiado de tamaño desde la última verificación.
 [2026-09-03 12:11:40] El archivo no ha cambiado de tamaño desde la última verificación.
 [2026-09-03 14:51:13] El tamaño remoto disminuyó (7106922 bytes) en comparación con el registrado (58450480 bytes). No se descarga.
+[2026-09-03 16:58:35] ¡Incremento detectado! Tamaño anterior: 7106922 bytes. Nuevo tamaño: 59601474 bytes.
+[2026-09-03 16:58:35] Descargando el archivo actualizado...
+[2026-09-03 16:59:25] Ejecutando script de cálculo y consolidación...
+[2026-09-03 17:03:02] Error al ejecutar el script de cálculo: Traceback (most recent call last):
+  File "/home/runner/work/MonitorSri-Web/MonitorSri-Web/procesador_sri.py", line 327, in <module>
+    main()
+  File "/home/runner/work/MonitorSri-Web/MonitorSri-Web/procesador_sri.py", line 221, in main
+    df_2026 = load_and_clean_2026(args.input_dir)
+  File "/home/runner/work/MonitorSri-Web/MonitorSri-Web/procesador_sri.py", line 186, in load_and_clean_2026
+    return load_and_clean_generic(filepath, 2026)
+  File "/home/runner/work/MonitorSri-Web/MonitorSri-Web/procesador_sri.py", line 144, in load_and_clean_generic
+    raise KeyError(f"Columnas requeridas no encontradas en el archivo de {year}: {missing}. Columnas disponibles: {actual_cols}")
+KeyError: "Columnas requeridas no encontradas en el archivo de 2026: ['CATEGORÍA', 'CODIGO DE VEHICULO', 'TIPO TRANSACCIÓN']. Columnas disponibles: ['CATEGORÃ\\x8dA', 'CÃ\\x93DIGO DE VEHÃ\\x8dCULO', 'TIPO TRANSACCIÃ\\x93N', 'MARCA', 'MODELO', 'PAIS', 'AÃ\\x91O MODELO', 'CLASE', 'SUB CLASE', 'TIPO', 'AVALUO', 'FECHA PROCESO (DD/MM/AAAA)', 'TIPO SERVICIO', 'CILINDRAJE', 'TIPO COMBUSTIBLE', 'FECHA COMPRA  (DD/MM/AAAA)', 'CANTÃ\\x93N', 'COLOR 1', 'COLOR 2', 'PERSONA NATURAL - JURÃ\\x8dDICA']"
+
+[2026-09-03 17:03:02] Enviando correo de notificación de error...
+[2026-09-03 17:03:04] Correo de error enviado con éxito.
+[2026-09-03 17:03:04] Enviando correo de notificación...
+[2026-09-03 17:03:04] Correo enviado con éxito.
