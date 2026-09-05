@@ -1842,3 +1842,4 @@ KeyError: "Columnas requeridas no encontradas en el archivo de 2026: ['CATEGORÍ
 [2026-09-04 18:16:34] Correo de error enviado con éxito.
 [2026-09-04 18:16:34] Enviando correo de notificación...
 [2026-09-04 18:16:35] Correo enviado con éxito.
+[2026-09-04 19:58:45] El archivo no ha cambiado de tamaño desde la última verificación.
