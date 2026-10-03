@@ -2027,3 +2027,7 @@ KeyError: "Columnas requeridas no encontradas en el archivo de 2026: ['CATEGORÍ
 [2026-10-03 07:01:45] Intento 2: Fallo en la conexión (Remote end closed connection without response).
 [2026-10-03 07:01:50] Intento 3: Fallo en la conexión (Remote end closed connection without response).
 [2026-10-03 07:01:50] Monitoreo abortado: No se pudo obtener un tamaño de archivo válido (> 0 bytes) tras los reintentos.
+[2026-10-03 11:09:22] Intento 1: Fallo en la conexión (Remote end closed connection without response).
+[2026-10-03 11:09:29] Intento 2: Fallo en la conexión (Remote end closed connection without response).
+[2026-10-03 11:09:37] Intento 3: Fallo en la conexión (Remote end closed connection without response).
+[2026-10-03 11:09:37] Monitoreo abortado: No se pudo obtener un tamaño de archivo válido (> 0 bytes) tras los reintentos.
