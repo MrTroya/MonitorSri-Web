@@ -2041,3 +2041,4 @@ KeyError: "Columnas requeridas no encontradas en el archivo de 2026: ['CATEGORÍ
 [2026-10-03 17:10:14] Monitoreo abortado: No se pudo obtener un tamaño de archivo válido (> 0 bytes) tras los reintentos.
 [2026-10-03 19:36:58] El archivo no ha cambiado de tamaño desde la última verificación.
 [2026-10-04 01:20:05] El archivo no ha cambiado de tamaño desde la última verificación.
+[2026-10-04 07:34:37] El archivo no ha cambiado de tamaño desde la última verificación.
