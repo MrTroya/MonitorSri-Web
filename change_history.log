@@ -2047,3 +2047,4 @@ KeyError: "Columnas requeridas no encontradas en el archivo de 2026: ['CATEGORÍ
 [2026-10-04 18:02:16] El archivo no ha cambiado de tamaño desde la última verificación.
 [2026-10-04 20:52:14] El archivo no ha cambiado de tamaño desde la última verificación.
 [2026-10-05 02:59:27] El archivo no ha cambiado de tamaño desde la última verificación.
+[2026-10-05 12:04:31] El tamaño remoto disminuyó (67812784 bytes) en comparación con el registrado (69385419 bytes). No se descarga.
