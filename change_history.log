@@ -2048,3 +2048,21 @@ KeyError: "Columnas requeridas no encontradas en el archivo de 2026: ['CATEGORÍ
 [2026-10-04 20:52:14] El archivo no ha cambiado de tamaño desde la última verificación.
 [2026-10-05 02:59:27] El archivo no ha cambiado de tamaño desde la última verificación.
 [2026-10-05 12:04:31] El tamaño remoto disminuyó (67812784 bytes) en comparación con el registrado (69385419 bytes). No se descarga.
+[2026-10-05 18:07:54] ¡Incremento detectado! Tamaño anterior: 67812784 bytes. Nuevo tamaño: 67925655 bytes.
+[2026-10-05 18:07:54] Descargando el archivo actualizado...
+[2026-10-05 18:08:52] Ejecutando script de cálculo y consolidación...
+[2026-10-05 18:12:19] Error al ejecutar el script de cálculo: Traceback (most recent call last):
+  File "/home/runner/work/MonitorSri-Web/MonitorSri-Web/procesador_sri.py", line 327, in <module>
+    main()
+  File "/home/runner/work/MonitorSri-Web/MonitorSri-Web/procesador_sri.py", line 221, in main
+    df_2026 = load_and_clean_2026(args.input_dir)
+  File "/home/runner/work/MonitorSri-Web/MonitorSri-Web/procesador_sri.py", line 186, in load_and_clean_2026
+    return load_and_clean_generic(filepath, 2026)
+  File "/home/runner/work/MonitorSri-Web/MonitorSri-Web/procesador_sri.py", line 144, in load_and_clean_generic
+    raise KeyError(f"Columnas requeridas no encontradas en el archivo de {year}: {missing}. Columnas disponibles: {actual_cols}")
+KeyError: "Columnas requeridas no encontradas en el archivo de 2026: ['CATEGORÍA', 'CODIGO DE VEHICULO', 'TIPO TRANSACCIÓN']. Columnas disponibles: ['ï»¿CATEGORÃ\\x8dA', 'CÃ\\x93DIGO DE VEHÃ\\x8dCULO', 'TIPO TRANSACCIÃ\\x93N', 'MARCA', 'MODELO', 'PAÃ\\x8dS', 'AÃ\\x91O MODELO', 'CLASE', 'SUB CLASE', 'TIPO', 'AVALÃ\\x9aO', 'FECHA PROCESO (DD/MM/AAAA)', 'TIPO SERVICIO', 'CILINDRAJE', 'TIPO COMBUSTIBLE', 'FECHA COMPRA  (DD/MM/AAAA)', 'CANTÃ\\x93N', 'COLOR 1', 'COLOR 2', 'PERSONA NATURAL - JURÃ\\x8dDICA']"
+
+[2026-10-05 18:12:19] Enviando correo de notificación de error...
+[2026-10-05 18:12:21] Correo de error enviado con éxito.
+[2026-10-05 18:12:21] Enviando correo de notificación...
+[2026-10-05 18:12:22] Correo enviado con éxito.
